@@ -30,8 +30,10 @@ sub call {
     $sock or die "Can't create socket to FCGI daemon: $!";
 
     my $conn = FCGI::Client::Connection->new(sock => $sock);
-    my $input = delete $env->{'psgi.input'};
-    my $content_in = do { local $/; <$input> };
+    my $content_in;
+    if ($env->{CONTENT_LENGTH}) {
+        $env->{'psgi.input'}->read($content_in, $env->{CONTENT_LENGTH});
+    }
 
     for my $key (keys %$env) {
         delete $env->{$key} if $key =~ /^psgi\./;

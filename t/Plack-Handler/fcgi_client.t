@@ -10,9 +10,6 @@ use FindBin;
 use Plack::Test::Suite;
 use t::FCGIUtils;
 
-
-use Data::Dumper;
-
 my $http_port;
 my $fcgi_port;
 
