@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw( subrequest );
+use Plack::App::File;
 
 use HTTP::Status qw(is_error);
 
@@ -40,8 +41,9 @@ sub call {
             }
             # TODO: allow 302 here?
         } else {
-            open my $fh, "<", $path or die "$path: $!";
-            $r->[2] = $fh;
+            $self->{file} ||= Plack::App::File->new;
+            my $res = $self->{file}->serve_path($env, $path);
+            @$r[1,2] = @$res[1,2];
         }
     });
 }
